@@ -1,0 +1,99 @@
+https://github.com/aws-deepracer/aws-deepracer-launcher/blob/main/getting-started.md
+
+    publish                                         msg                                                     subscribe                                       
+
+1.  camera_pkg(camera_node)                         camera_pkg_video_mjpeg                                  sensor_fusion_pkg(sensor_fusion_node), web_video_server
+                                                    camera_pkg_display_mjpeg                                sensor_fusion_pkg(sensor_fusion_node)
+
+2.  rplidar_ros(rplidar_scan_publisher)             rplidar_ros_scan                                        sensor_fusion_pkg(sensor_fusion_node)
+
+3.  sensor_fusion_pkg(sensor_fusion_node)           sensor_fusion_pkg_sensor_msg                            inference-pkg(inference_node)
+                                                    sensor_fusion_pkg_overlay_msg
+
+4.  inference-pkg(inference_node)                   inference_pkg_rl_results                                navigation-pkg(deepracer_navigation_node)
+
+5.  navigation-pkg(deepracer_navigation_node)       deepracer_navigation_pkg_auto_drive                     ctrl-pkg(ctrl_node)
+
+6.  usb-monitor-pkg(usb_monitor_node)               usb_monitor_pkg_usb_file_system_notification            systems-pkg(model_loader_node, network_monitor_node, software_update_node)
+
+7.  systems-pkg(network_monitor_node)               deepracer_systems_pkg/network_connection_status         systems-pkg(software_update_node)    
+
+8.  systems-pkg(software_update_node)               deepracer_systems_pkg_software_update_pct               webserver-pkg(webserver_publisher_node)               
+
+9.  webserver-pkg(webserver_publisher_node)         webserver_pkg/calibration_drive	                        ctrl-pkg(ctrl_node)
+                                                    webserver_pkg/manual_drive                              ctrl-pkg(ctrl_node)
+
+10. ctrl-pkg(ctrl_node)                             ctrl_pkg/raw_pwm                                        servo-pkg(servo_node)
+                                                    ctrl_pkg/servo_msg                                      servo-pkg(servo_node)
+
+
+
+
+
+
+
+
+    Server                                          service                                                 Clieant
+
+1.  camera_pkg(camera_node)                         media_state
+
+2.  rplidar_ros(rplidar_scan_publisher)
+
+3.  sensor_fusion_pkg(sensor_fusion_node)           sensor_data_status                                      webserver-pkg(webserver_publisher_node)
+                                                    configure_lidar                                         webserver-pkg(webserver_publisher_node)
+
+4.  inference-pkg(inference_node)                   load_model                                              ctrl-pkg(ctrl_node)
+                                                    inference_state                                         ctrl-pkg(ctrl_node)
+
+5.  navigation-pkg(deepracer_navigation_node)       action_space_service                                    ctrl-pkg(ctrl_node)
+                                                    throttle_service                                        ctrl-pkg(ctrl_node)
+
+6.  usb-monitor-pkg(usb_monitor_node)               usb_file_system_subscribe                               systems-pkg(model_loader_node, network_monitor_node, software_update_node)   
+                                                    usb_mount_point_manager                                 systems-pkg(model_loader_node, network_monitor_node, software_update_node)  
+
+7.  systems-pkg(model_loader_node)                  verify_model_ready                                      webserver-pkg(webserver_publisher_node)
+                                                    console_model_action                                    webserver-pkg(webserver_publisher_node)
+status_led_pkg/led_blink                  
+status_led_pkg/led_solid
+model_optimizer_pkg/model_optimizer_server
+
+8.  systems-pkg(network_monitor_node)               
+
+status_led_pkg_led_blink
+status_led_pkg_led_solid
+
+9.  systems-pkg(software_update_node)               software_update_check                                   webserver-pkg(webserver_publisher_node)
+                                                    begin_update                                            webserver-pkg(webserver_publisher_node)
+                                                    software_update_state                                   webserver-pkg(webserver_publisher_node)
+
+status_led_pkg_led_blink
+status_led_pkg_led_solid
+
+
+10. webserver-pkg(webserver_publisher_node)
+
+/device_info_pkg/get_device_info
+/i2c_pkg/battery_level
+/deepracer_systems_pkg/get_otg_link_state
+
+
+11. ctrl-pkg(ctrl_node)                             vehicle_state                                           webserver-pkg(webserver_publisher_node)
+                                                    enable_state                                            webserver-pkg(webserver_publisher_node)
+                                                    get_car_cal                                             webserver-pkg(webserver_publisher_node)
+                                                    set_car_cal                                             webserver-pkg(webserver_publisher_node)
+                                                    set_car_led                                             webserver-pkg(webserver_publisher_node)
+                                                    get_car_led                                             webserver-pkg(webserver_publisher_node)
+                                                    get_ctrl_modes                                          webserver-pkg(webserver_publisher_node)
+                                                    model_state                                             webserver-pkg(webserver_publisher_node)
+                                                    autonomous_throttle                                     webserver-pkg(webserver_publisher_node)
+                                                    is_model_loading                                        webserver-pkg(webserver_publisher_node)
+
+model_optimizer_pkg/model_optimizer_server
+
+12. servo-pkg(servo_node)                           servo_gpio                                              ctrl-pkg(ctrl_node)
+                                                    set_calibration                                         ctrl-pkg(ctrl_node)
+                                                    get_calibration                                         ctrl-pkg(ctrl_node)
+                                                    set_led_state                                           ctrl-pkg(ctrl_node)
+                                                    get_led_state                                           ctrl-pkg(ctrl_node)
+
+
